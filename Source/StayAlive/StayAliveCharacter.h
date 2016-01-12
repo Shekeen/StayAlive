@@ -21,6 +21,22 @@ class AStayAliveCharacter : public ACharacter
 	/** First person camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FirstPersonCameraComponent;
+
+public:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+    int32 MaxHP;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+    float FireCooldown;
+
+protected:
+    int32 HP;
+    float CurCooldown;
+    bool bCanFire;
+
+protected:
+    void BeginCooldown();
+
 public:
 	AStayAliveCharacter();
 
@@ -98,6 +114,14 @@ protected:
 	bool EnableTouchscreenMovement(UInputComponent* InputComponent);
 
 public:
+    virtual void Tick(float deltaSeconds) override;
+
+    UFUNCTION(BlueprintPure, Category = Gameplay)
+    int32 GetHP();
+
+    UFUNCTION(BlueprintPure, Category = Gameplay)
+    float GetCooldown();
+
 	/** Returns Mesh1P subobject **/
 	FORCEINLINE class USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
 	/** Returns FirstPersonCameraComponent subobject **/

@@ -2,6 +2,7 @@
 
 #include "StayAlive.h"
 #include "StayAliveProjectile.h"
+#include "Enemy.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
 AStayAliveProjectile::AStayAliveProjectile() 
@@ -29,15 +30,32 @@ AStayAliveProjectile::AStayAliveProjectile()
 
 	// Die after 3 seconds by default
 	InitialLifeSpan = 3.0f;
+
+    BaseDamage = 1;
+    DamageMultiplier = 1;
+}
+
+int32 AStayAliveProjectile::GetDamage()
+{
+    return BaseDamage * DamageMultiplier;
 }
 
 void AStayAliveProjectile::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	// Only add impulse and destroy projectile if we hit a physics
-	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics())
-	{
-		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
+    if (OtherActor == nullptr || OtherActor == this || OtherComp == nullptr)
+        return;
 
+    AEnemy* enemy = Cast<AEnemy>(OtherActor);
+    if (enemy != nullptr) {
+        enemy->Damage(GetDamage());
+        Destroy();
+    } else if (OtherActor->ActorHasTag("floor")) {
+        DamageMultiplier = 2;
+    } else if (OtherActor->ActorHasTag("wall")) {
+        DamageMultiplier = 5;
+    } else if (OtherComp->IsSimulatingPhysics()) {
+        // Only add impulse and destroy projectile if we hit a physics
+        OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
 		Destroy();
 	}
 }

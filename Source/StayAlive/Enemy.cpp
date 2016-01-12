@@ -10,6 +10,15 @@ AEnemy::AEnemy()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+    MaxHP = 10;
+    HP = MaxHP;
+}
+
+void AEnemy::Damage(int32 damage)
+{
+    HP -= damage;
+    if (HP <= 0)
+        Destroy();
 }
 
 // Called when the game starts or when spawned
@@ -33,3 +42,5 @@ void AEnemy::SetupPlayerInputComponent(class UInputComponent* InputComponent)
 
 }
 
+void AEnemy::OnAimedAt_Implementation()
+{}

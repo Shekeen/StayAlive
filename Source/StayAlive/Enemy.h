@@ -10,9 +10,18 @@ class STAYALIVE_API AEnemy : public ACharacter
 {
 	GENERATED_BODY()
 
+protected:
+    int32 HP;
+
+public:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+    int32 MaxHP;
+
 public:
 	// Sets default values for this character's properties
 	AEnemy();
+
+    void Damage(int32 damage);
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -23,6 +32,6 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
-	
-	
+    UFUNCTION(BlueprintNativeEvent, Category = Gameplay)
+    void OnAimedAt();
 };

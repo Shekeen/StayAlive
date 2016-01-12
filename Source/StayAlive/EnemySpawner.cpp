@@ -10,6 +10,12 @@ AEnemySpawner::AEnemySpawner()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+    SpawnClass = AEnemy::StaticClass();
+    MinSpawnCooldown = 1.f;
+    MaxSpawnCooldown = 4.f;
+
+    CurSpawnCooldown = GetRandomSpawnCooldown();
+    bCanSpawn = true;
 }
 
 // Called when the game starts or when spawned
@@ -24,5 +30,49 @@ void AEnemySpawner::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
+    if (!bCanSpawn)
+        return;
+
+    CurSpawnCooldown -= DeltaTime;
+    if (CurSpawnCooldown < 0.f) {
+        SpawnNewEnemy();
+        CurSpawnCooldown += GetRandomSpawnCooldown();
+    }
 }
 
+void AEnemySpawner::EnableSpawning()
+{
+    bCanSpawn = true;
+    CurSpawnCooldown = GetRandomSpawnCooldown();
+}
+
+void AEnemySpawner::DisableSpawning()
+{
+    bCanSpawn = false;
+}
+
+float AEnemySpawner::GetRandomSpawnCooldown()
+{
+    return FMath::FRandRange(MinSpawnCooldown, MaxSpawnCooldown);
+}
+
+AActor* AEnemySpawner::GetRandomSpawnPoint()
+{
+    int32 spawnPointsNum = SpawnPoints.Num();
+    if (spawnPointsNum == 0)
+        return nullptr;
+    return SpawnPoints[FMath::RandRange(0, spawnPointsNum - 1)];
+}
+
+void AEnemySpawner::SpawnNewEnemy()
+{
+    AActor* spawnPoint = GetRandomSpawnPoint();
+    if (spawnPoint == nullptr)
+        return;
+
+    UWorld* world = GetWorld();
+    if (world == nullptr)
+        return;
+
+    world->SpawnActor<AEnemy>(SpawnClass, spawnPoint->GetActorLocation(), spawnPoint->GetActorRotation());
+}

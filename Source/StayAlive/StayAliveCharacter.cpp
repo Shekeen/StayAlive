@@ -46,6 +46,19 @@ AStayAliveCharacter::AStayAliveCharacter()
 
 	// Note: The ProjectileClass and the skeletal mesh/anim blueprints for Mesh1P are set in the
 	// derived blueprint asset named MyCharacter (to avoid direct content references in C++)
+
+    MaxHP = 10;
+    FireCooldown = 1.f;
+
+    HP = MaxHP;
+    CurCooldown = 0.f;
+    bCanFire = true;
+}
+
+void AStayAliveCharacter::BeginCooldown()
+{
+    CurCooldown = FireCooldown;
+    bCanFire = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -79,6 +92,9 @@ void AStayAliveCharacter::SetupPlayerInputComponent(class UInputComponent* Input
 
 void AStayAliveCharacter::OnFire()
 { 
+    if (!bCanFire)
+        return;
+
 	// try and fire a projectile
 	if (ProjectileClass != NULL)
 	{
@@ -91,6 +107,7 @@ void AStayAliveCharacter::OnFire()
 		{
 			// spawn the projectile at the muzzle
 			World->SpawnActor<AStayAliveProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
+            BeginCooldown();
 		}
 	}
 
@@ -214,4 +231,24 @@ bool AStayAliveCharacter::EnableTouchscreenMovement(class UInputComponent* Input
 		InputComponent->BindTouch(EInputEvent::IE_Repeat, this, &AStayAliveCharacter::TouchUpdate);
 	}
 	return bResult;
+}
+
+void AStayAliveCharacter::Tick(float deltaSeconds)
+{
+    Super::Tick(deltaSeconds);
+    if (!bCanFire) {
+        CurCooldown -= deltaSeconds;
+        if (CurCooldown <= 0.f)
+            bCanFire = true;
+    }
+}
+
+int32 AStayAliveCharacter::GetHP()
+{
+    return HP;
+}
+
+float AStayAliveCharacter::GetCooldown()
+{
+    return CurCooldown;
 }
