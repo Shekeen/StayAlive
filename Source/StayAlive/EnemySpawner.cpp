@@ -11,6 +11,7 @@ AEnemySpawner::AEnemySpawner()
 	PrimaryActorTick.bCanEverTick = true;
 
     SpawnClass = AEnemy::StaticClass();
+    MaxSpawnedEnemies = 5;
     MinSpawnCooldown = 1.f;
     MaxSpawnCooldown = 4.f;
 
@@ -31,6 +32,11 @@ void AEnemySpawner::Tick( float DeltaTime )
 	Super::Tick( DeltaTime );
 
     if (!bCanSpawn)
+        return;
+
+    TArray<AActor*> enemies;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemy::StaticClass(), enemies);
+    if (enemies.Num() >= MaxSpawnedEnemies)
         return;
 
     CurSpawnCooldown -= DeltaTime;

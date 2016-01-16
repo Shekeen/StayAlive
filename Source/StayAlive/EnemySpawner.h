@@ -19,6 +19,9 @@ public:
     TSubclassOf<AEnemy> SpawnClass;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+    int32 MaxSpawnedEnemies;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
     float MinSpawnCooldown;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)

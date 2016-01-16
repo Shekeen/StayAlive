@@ -32,6 +32,9 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
+    UFUNCTION(BlueprintPure, Category = Gameplay)
+    int32 GetHP();
+
     UFUNCTION(BlueprintNativeEvent, Category = Gameplay)
     void OnAimedAt();
 };

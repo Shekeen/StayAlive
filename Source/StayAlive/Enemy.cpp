@@ -42,5 +42,10 @@ void AEnemy::SetupPlayerInputComponent(class UInputComponent* InputComponent)
 
 }
 
+int32 AEnemy::GetHP()
+{
+    return HP;
+}
+
 void AEnemy::OnAimedAt_Implementation()
 {}

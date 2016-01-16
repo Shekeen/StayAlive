@@ -3,6 +3,7 @@
 #include "StayAlive.h"
 #include "StayAliveCharacter.h"
 #include "StayAliveProjectile.h"
+#include "Enemy.h"
 #include "Animation/AnimInstance.h"
 #include "GameFramework/InputSettings.h"
 
@@ -236,10 +237,25 @@ bool AStayAliveCharacter::EnableTouchscreenMovement(class UInputComponent* Input
 void AStayAliveCharacter::Tick(float deltaSeconds)
 {
     Super::Tick(deltaSeconds);
+
     if (!bCanFire) {
         CurCooldown -= deltaSeconds;
         if (CurCooldown <= 0.f)
             bCanFire = true;
+    }
+
+    FHitResult hitResult(ForceInit);
+    FVector start = GetActorLocation();
+    FVector end = start + 5000 * GetActorForwardVector();
+    FCollisionQueryParams queryParams;
+    queryParams.AddIgnoredActor(this);
+    queryParams.bTraceAsyncScene = true;
+    FCollisionObjectQueryParams objectQueryParams;
+    GetWorld()->LineTraceSingleByObjectType(hitResult, start, end, objectQueryParams, queryParams);
+    
+    AEnemy* enemyAimedAt = Cast<AEnemy>(hitResult.GetActor());
+    if (enemyAimedAt != nullptr) {
+        enemyAimedAt->OnAimedAt();
     }
 }
 
