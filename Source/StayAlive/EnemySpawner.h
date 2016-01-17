@@ -51,4 +51,7 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = Gameplay)
     void DisableSpawning();
+
+    UFUNCTION(BlueprintNativeEvent, Category = Gameplay)
+    void OnEnemySpawned(AEnemy* enemy);
 };

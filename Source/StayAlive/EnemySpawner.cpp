@@ -80,5 +80,11 @@ void AEnemySpawner::SpawnNewEnemy()
     if (world == nullptr)
         return;
 
-    world->SpawnActor<AEnemy>(SpawnClass, spawnPoint->GetActorLocation(), spawnPoint->GetActorRotation());
+    AEnemy* enemy = world->SpawnActor<AEnemy>(SpawnClass, 
+                                              spawnPoint->GetActorLocation(), 
+                                              spawnPoint->GetActorRotation());
+    OnEnemySpawned(enemy);
 }
+
+void AEnemySpawner::OnEnemySpawned_Implementation(AEnemy* enemy)
+{}
